@@ -1,0 +1,174 @@
+<template>
+  <div class="home">
+    <MainHeader msg="List the SWAPI Characters" />
+  </div>
+  <base-dialog v-if="visibleDialog" title="Planet details" :data="modalData">
+    <template #default>
+      <li>Name: {{ modalData.name }}</li>
+      <li>Diameter: {{ modalData.diameter }}</li>
+      <li>Climate: {{ modalData.climate }}</li>
+      <li>Population: {{ modalData.population }}</li>
+    </template>
+    <template #actions>
+      <base-button @click="toggleDialog">Close</base-button>
+    </template>
+  </base-dialog>
+
+  <div class="search-wrapper panel-heading col-sm-12">
+    <input class="icon" type="text" v-model="searchTerm" placeholder="Search" />
+  </div>
+
+  <div style="overflow-x: auto">
+    <table>
+      <tr>
+        <th>#</th>
+        <th
+          @click="sortByProp('name')"
+          v-bind:class="[sortByProp === 'name' ? sortDirection : '']"
+        >
+          Name
+        </th>
+        <th>Height</th>
+        <th>Mass</th>
+        <th>Created</th>
+        <th>Edited</th>
+        <th>Planet Name</th>
+      </tr>
+      <tr v-for="(character, index) in filteredResults" :key="index">
+        <td>{{ index }}</td>
+        <td>{{ character.name }}</td>
+        <td>{{ character.height }}</td>
+        <td>{{ character.mass }}</td>
+        <td>{{ character.created.slice(0, -17) }}</td>
+        <td>{{ character.edited.slice(0, -17) }}</td>
+        <td style="padding: 5px">
+          <base-button mode="flat" @click="toggleDialog(character.homeworld)">{{
+            character.homeworld.name
+          }}</base-button>
+        </td>
+      </tr>
+    </table>
+  </div>
+</template>
+
+<script>
+import MainHeader from "@/components/MainHeader.vue";
+
+export default {
+  name: "App",
+  components: {
+    MainHeader,
+  },
+  data() {
+    return {
+      planets: [],
+      sortBy: "name",
+      sortDirection: "asc",
+      visibleDialog: false,
+      searchTerm: "",
+    };
+  },
+  methods: {
+    // pass in map return date in timestamp format
+    sortByProp(main, prop, dir) {
+      const sortedArr = this.characters.sort((a, b) => {
+        a[prop] > b[prop];
+      });
+      return dir === -1 ? sortedArr : sortedArr.reverse();
+    },
+    // pass in characters
+    toggleDialog(characters) {
+      this.modalData = characters;
+      this.visibleDialog = !this.visibleDialog;
+    },
+  },
+  computed: {
+    characters() {
+      return this.$store.state.characters;
+    },
+    filteredResults() {
+      // match keyword against name.
+      const pattern = new RegExp(this.searchTerm, "i");
+      const filteredData = this.characters.filter((characters) => {
+        return characters.name.match(pattern); // return
+      });
+      return filteredData;
+    },
+  },
+  mounted() {
+    this.$store.dispatch("getData");
+  },
+};
+</script>
+
+<style>
+input[type="text"] {
+  background-color: #d1d1d1;
+}
+.icon {
+  padding-left: 25px;
+  background: url("https://static.thenounproject.com/png/101791-200.png")
+    no-repeat left;
+  background-size: 20px;
+  font-size: 1rem;
+}
+.asc:after {
+  content: "\25B2";
+}
+
+.desc:after {
+  content: "\25BC";
+}
+* {
+  box-sizing: border-box;
+}
+
+.row {
+  margin-left: -5px;
+  margin-right: -5px;
+}
+
+.column {
+  float: left;
+  width: 50%;
+  padding: 5px;
+}
+
+/* Clearfix (clear floats) */
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+/* tables */
+table {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  overflow-x: auto;
+  font-size: 1rem;
+  margin: 2% 0%;
+}
+table td,
+table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+table tr:nth-child(odd) {
+  background-color: #091422;
+}
+table tr:hover {
+  background-color: #ddd;
+}
+table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #35495e;
+  color: white;
+}
+</style>

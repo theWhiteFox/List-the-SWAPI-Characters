@@ -37,10 +37,7 @@
     <table>
       <tr>
         <th>#</th>
-        <th
-          @click="sortByProp(character, 'name', 'desc')"
-          v-bind:class="[sortByProp === 'name' ? sortDirection : '']"
-        >Name</th>
+        <th v-on:click="sortedArray">Name</th>
         <th>Height</th>
         <th>Mass</th>
         <th>Created</th>
@@ -76,17 +73,24 @@ export default {
   },
   data() {
     return {
+      ascending: true,
       visibleDialog: false,
       searchTerm: "",
     };
   },
   methods: {
     // pass in map return date in timestamp format
-    sortByProp(characters, prop, dir) {
-      const sortedArr = this.characters.sort((a, b) => {
-        a[prop] > b[prop];
-      });
-      return dir === -1 ? sortedArr : sortedArr.reverse();
+    sortedArray() {
+      this.characters.sort((a, b) => {
+        let fa = a.name.toLowerCase(), fb = b.name.toLowerCase();
+        if (fa < fb) {
+          return -1
+        }
+        if (fa > fb) {
+          return 1
+        }
+        return 0
+      })
     },
     // pass in characters
     toggleDialog(characters) {

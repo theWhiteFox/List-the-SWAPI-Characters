@@ -4,10 +4,25 @@
   </div>
   <base-dialog v-if="visibleDialog" title="Planet details" :data="modalData">
     <template #default>
-      <li>Name: {{ modalData.name }}</li>
-      <li>Diameter: {{ modalData.diameter }}</li>
-      <li>Climate: {{ modalData.climate }}</li>
-      <li>Population: {{ modalData.population }}</li>
+      <img align="left" src="../assets/planet.png" alt />
+      <ul>
+        <li>
+          <strong>Planet Name:</strong>
+          {{ modalData.name }}
+        </li>
+        <li>
+          <strong>Diameter:</strong>
+          {{ modalData.diameter }}
+        </li>
+        <li>
+          <strong>Climate:</strong>
+          {{ modalData.climate }}
+        </li>
+        <li>
+          <strong>Population:</strong>
+          {{ modalData.population }}
+        </li>
+      </ul>
     </template>
     <template #actions>
       <base-button @click="toggleDialog">Close</base-button>
@@ -23,11 +38,9 @@
       <tr>
         <th>#</th>
         <th
-          @click="sortByProp('name')"
+          @click="sortByProp(character, 'name', 'desc')"
           v-bind:class="[sortByProp === 'name' ? sortDirection : '']"
-        >
-          Name
-        </th>
+        >Name</th>
         <th>Height</th>
         <th>Mass</th>
         <th>Created</th>
@@ -42,9 +55,11 @@
         <td>{{ character.created.slice(0, -17) }}</td>
         <td>{{ character.edited.slice(0, -17) }}</td>
         <td style="padding: 5px">
-          <base-button mode="flat" @click="toggleDialog(character.homeworld)">{{
-            character.homeworld.name
-          }}</base-button>
+          <base-button mode="flat" @click="toggleDialog(character.homeworld)">
+            {{
+              character.homeworld.name
+            }}
+          </base-button>
         </td>
       </tr>
     </table>
@@ -61,16 +76,13 @@ export default {
   },
   data() {
     return {
-      planets: [],
-      sortBy: "name",
-      sortDirection: "asc",
       visibleDialog: false,
       searchTerm: "",
     };
   },
   methods: {
     // pass in map return date in timestamp format
-    sortByProp(main, prop, dir) {
+    sortByProp(characters, prop, dir) {
       const sortedArr = this.characters.sort((a, b) => {
         a[prop] > b[prop];
       });
@@ -101,7 +113,17 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+ul {
+  text-align: left;
+  margin-left: 40%;
+  margin-top: 8%;
+  text-decoration: none;
+  list-style-type: none;
+}
+li {
+  margin-bottom: 14px;
+}
 input[type="text"] {
   background-color: #d1d1d1;
 }
@@ -115,32 +137,27 @@ input[type="text"] {
 .asc:after {
   content: "\25B2";
 }
-
 .desc:after {
   content: "\25BC";
 }
 * {
   box-sizing: border-box;
 }
-
 .row {
   margin-left: -5px;
   margin-right: -5px;
 }
-
 .column {
   float: left;
   width: 50%;
   padding: 5px;
 }
-
 /* Clearfix (clear floats) */
 .row::after {
   content: "";
   clear: both;
   display: table;
 }
-
 /* tables */
 table {
   font-family: Arial, Helvetica, sans-serif;

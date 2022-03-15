@@ -41,6 +41,7 @@
       git repository that we can access or a zipped attachment or a link to a
       zipped file of the completed assessment.
     </p>
+    <p>Code: <a href="https://github.com/theWhiteFox/List-the-SWAPI-Characters">theWhiteFox List the SWAPI Characters</a></p>
   </div>
 </template>
 

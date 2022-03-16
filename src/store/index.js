@@ -4,6 +4,8 @@ import axios from "axios";
 export default new Vuex.Store({
   state: {
     characters: [],
+    busy: false,
+    error: "",
   },
   getters: {
     allCharacters: (state) => {
